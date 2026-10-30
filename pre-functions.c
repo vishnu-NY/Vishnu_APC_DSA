@@ -3,33 +3,70 @@
 #include<ctype.h>
 #include"header.h"
 
-status validate_arguments(char** argv,input* input)
+status validate_arguments(char** argv, input* input)
 {
-    int i=0;
-    while(argv[1][i]!='\0')
+    int i = 0;
+
+    // Default signs: 0 = positive, 1 = negative.
+    input->flag1 = 0;
+    input->flag2 = 0;
+    input->flagres = 0;
+
+    // Validate first char
+    if(argv[1][0] == '-')
     {
-        if(!isdigit(argv[1][i]))
+        input->flag1 = 1;
+        i = 1;
+    }
+
+    if(argv[1][i] == '\0')
+    {
+        printf("ERROR : 1st number must contain digits\n");
+        return FAILURE;
+    }
+
+    while(argv[1][i] != '\0')
+    {
+        if(!isdigit((unsigned char)argv[1][i]))
         {
-            printf("ERROR : 1st number contains non digit characters\n");
+            printf("ERROR : Invalid character in 1st number\n");
             return FAILURE;
         }
         i++;
     }
-    i=0;
-    while(argv[3][i]!='\0')
+
+    // Validate second number. 
+    i = 0;
+
+    if(argv[3][0] == '-')
     {
-        if(!isdigit(argv[3][i]))
+        input->flag2 = 1;
+        i = 1;
+    }
+
+    if(argv[3][i] == '\0')
+    {
+        printf("ERROR : 2nd number must contain digits\n");
+        return FAILURE;
+    }
+
+    while(argv[3][i] != '\0')
+    {
+        if(!isdigit((unsigned char)argv[3][i]))
         {
-            printf("ERROR : 2nd number contains non digit characters\n");
+            printf("ERROR : Invalid character in 2nd number\n");
             return FAILURE;
         }
         i++;
     }
-    if(!((argv[2][0]=='+')||(argv[2][0]=='-')||(argv[2][0]=='*')||(argv[2][0]=='/')))
+
+   // Validate operator.
+    if(strlen(argv[2]) != 1 || !(argv[2][0] == '+' || argv[2][0] == '-' || argv[2][0] == '*' || argv[2][0] == '/'))
     {
         printf("ERROR : Unsupported operator\n");
         return FAILURE;
     }
+
     printf("INFO : Validation Successful\n");
     return SUCCESS;
 }

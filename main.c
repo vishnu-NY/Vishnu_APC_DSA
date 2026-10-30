@@ -24,7 +24,7 @@ int main (int argc, char* argv[])
     {
         printf("ERROR : Loading values to Linked lists Failed\n");
     }
-    addition(head1,head2,tail1,tail2,&reshead,&restail);
+    addition(head1,head2,tail1,tail2,&reshead,&restail,&input);
     
     display_list(head1);//TESTING
     display_list(head2);
