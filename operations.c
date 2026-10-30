@@ -2,6 +2,8 @@
 #include<string.h>
 #include<ctype.h>
 #include"header.h"
+#include<stdlib.h>
+
 
 status addition(node *head1, node *head2, node* tail1, node* tail2, node** reshead, node** restail,input *info)
 {
@@ -97,4 +99,63 @@ status addition(node *head1, node *head2, node* tail1, node* tail2, node** reshe
         {
             add_to_first(reshead, restail, carry);
         }
+}
+
+
+status subtract_lists(node *tail1, node *tail2,node **reshead, node **restail)
+{
+    node *temp1 = tail1;
+    node *temp2 = tail2;
+
+    int borrow = 0;
+    int d1, d2, res;
+
+    while(temp1 != NULL || temp2 != NULL)
+    {
+        d1 = (temp1 != NULL) ? temp1->data : 0;
+        d2 = (temp2 != NULL) ? temp2->data : 0;
+
+        res = d1 - d2 - borrow;
+
+        if(res < 0)
+        {
+            res += 10;
+            borrow = 1;
+        }
+        else
+        {
+            borrow = 0;
+        }
+
+        if(add_to_first(reshead, restail, res) != LIST_SUCCESS)
+        {
+            return FAILURE;
+        }
+
+        if(temp1 != NULL)
+        {
+            temp1 = temp1->prev;
+        }
+
+        if(temp2 != NULL)
+        {
+            temp2 = temp2->prev;
+        }
+    }
+
+    /* Remove leading zeroes, keeping one node for zero. */
+
+    while(*reshead != NULL &&
+          (*reshead)->data == 0 &&
+          (*reshead)->next != NULL)
+    {
+        node *temp = *reshead;
+
+        *reshead = temp->next;
+        (*reshead)->prev = NULL;
+
+        free(temp);
+    }
+
+    return SUCCESS;
 }
