@@ -15,7 +15,6 @@ status validate_arguments(char** argv,input* input)
         }
         i++;
     }
-    input->count1 = i-1;
     i=0;
     while(argv[3][i]!='\0')
     {
@@ -26,8 +25,6 @@ status validate_arguments(char** argv,input* input)
         }
         i++;
     }
-    input->count2=i-1;
-
     if(!((argv[2][0]=='+')||(argv[2][0]=='-')||(argv[2][0]=='*')||(argv[2][0]=='/')))
     {
         printf("ERROR : Unsupported operator\n");
@@ -35,8 +32,8 @@ status validate_arguments(char** argv,input* input)
     }
     printf("INFO : Validation Successful\n");
     return SUCCESS;
-
 }
+
 status load_values_to_DLL(node ** head1, node** tail1,node** head2,node** tail2, char* num,char* num2)
 {
     int i=0;
