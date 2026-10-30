@@ -58,3 +58,70 @@ list_status display_list(node* head)
     printf("\n");
     return LIST_SUCCESS;
 }
+int compare_lists(node *head1, node *head2)
+{
+    node *temp1 = head1;
+    node *temp2 = head2;
+
+    long long int count1 = 0;
+    long long int count2 = 0;
+
+    /* Skip leading zeroes on both list. */
+    while(temp1 != NULL && temp1->data == 0)
+    {
+        temp1 = temp1->next;
+    }
+
+    while(temp2 != NULL && temp2->data == 0)
+    {
+        temp2 = temp2->next;
+    }
+
+    node *start1 = temp1;
+    node *start2 = temp2;
+
+    /* Count digits after ignoring leading zeroes. */
+    while(temp1 != NULL)
+    {
+        count1++;
+        temp1 = temp1->next;
+    }
+
+    while(temp2 != NULL)
+    {
+        count2++;
+        temp2 = temp2->next;
+    }
+
+    if(count1 > count2)
+    {
+        return 1;
+    }
+
+    if(count2 > count1)
+    {
+        return 2;
+    }
+
+    //if counts are equal.
+    temp1 = start1;
+    temp2 = start2;
+
+    while(temp1 != NULL && temp2 != NULL)
+    {
+        if(temp1->data > temp2->data)
+        {
+            return 1;
+        }
+
+        if(temp2->data > temp1->data)
+        {
+            return 2;
+        }
+
+        temp1 = temp1->next;
+        temp2 = temp2->next;
+    }
+
+    return 0;
+}
