@@ -30,8 +30,7 @@ status addition(node *head1, node *head2, node* tail1, node* tail2, node** reshe
                Result takes the first number's sign. */
             info->flagres = info->flag1;
 
-            return subtraction(head1, head2, tail1, tail2,
-                               reshead, restail);
+            return subtraction(head1, head2, tail1, tail2,reshead, restail);
         }
         else
         {
@@ -39,13 +38,12 @@ status addition(node *head1, node *head2, node* tail1, node* tail2, node** reshe
                Result takes the second number's sign. */
             info->flagres = info->flag2;
 
-            return subtraction(head2, head1, tail2, tail1,
-                               reshead, restail);
+            return subtraction(head2, head1, tail2, tail1,reshead, restail);
         }
     }
 
     /* Same signs: add normally and keep their common sign. */
-    
+
     info->flagres = info->flag1;
 
     node* temp1 = tail1;

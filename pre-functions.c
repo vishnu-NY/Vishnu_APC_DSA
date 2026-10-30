@@ -71,36 +71,73 @@ status validate_arguments(char** argv, input* input)
     return SUCCESS;
 }
 
-status load_values_to_DLL(node ** head1, node** tail1,node** head2,node** tail2, char* num,char* num2)
+status load_values_to_DLL(node **head1, node **tail1,node **head2, node **tail2,char *num, char *num2)
 {
-    int i=0;
-    while(num[i]!=0)
+    int i = 0;
+
+    // Skip the first number's negative sign. 
+    if(num[i] == '-')
     {
-        add_to_last(head1,tail1,(num[i]-'0'));
         i++;
-    }
-    if(num[i]=='\0')
-    {
-        printf("INFO : Loading num1 to List successful\n");
-    }
-    else
-    {
-        printf("ERROR : Loading num1 to list failed\n");
-    }
-    /*-----------------------------N U M -2 ---------------------*/
-    i = 0; 
-    while(num2[i]!=0)
-    {
-        add_to_last(head2,tail2,(num2[i]-'0'));
-        i++;
-    }
-    if(num2[i]=='\0')
-    {
-        printf("INFO : Loading num2 to List successful\n");
-    }
-    else
-    {
-        printf("ERROR : Loading num2 to list failed\n");
     }
 
+    // Skip leading zeroes. 
+    while(num[i] == '0')
+    {
+        i++;
+    }
+
+    // An all-zero number must still have one zero node.
+    if(num[i] == '\0')
+    {
+        if(add_to_last(head1, tail1, 0) != LIST_SUCCESS)
+        {
+            return FAILURE;
+        }
+    }
+    else
+    {
+        while(num[i] != '\0')
+        {
+            if(add_to_last(head1, tail1, num[i] - '0') != LIST_SUCCESS)
+            {
+                return FAILURE;
+            }
+            i++;
+        }
+    }
+
+    // Load the second number. 
+    i = 0;
+
+    if(num2[i] == '-')
+    {
+        i++;
+    }
+
+    while(num2[i] == '0')
+    {
+        i++;
+    }
+
+    if(num2[i] == '\0')
+    {
+        if(add_to_last(head2, tail2, 0) != LIST_SUCCESS)
+        {
+            return FAILURE;
+        }
+    }
+    else
+    {
+        while(num2[i] != '\0')
+        {
+            if(add_to_last(head2, tail2, num2[i] - '0') != LIST_SUCCESS)
+            {
+                return FAILURE;
+            }
+            i++;
+        }
+    }
+
+    return SUCCESS;
 }
