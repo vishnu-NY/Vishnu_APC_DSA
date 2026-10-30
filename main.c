@@ -24,7 +24,28 @@ int main (int argc, char* argv[])
     {
         printf("ERROR : Loading values to Linked lists Failed\n");
     }
-    addition(head1,head2,tail1,tail2,&reshead,&restail,&input);
+    switch(check_operation(argv[2]))
+{
+    case 1:
+        addition(head1, head2, tail1, tail2,&reshead, &restail, &input);
+        break;
+
+    case 2:
+        subtraction(head1, head2, tail1, tail2,&reshead, &restail);
+        break;
+
+    case 3:
+        
+        break;
+
+    case 4:
+        
+        break;
+
+    default:
+        printf("ERROR : Unsupported operator\n");
+        return 1;
+}
     
     display_list(head1);//TESTING
     display_list(head2);

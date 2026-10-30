@@ -31,10 +31,13 @@ typedef enum{
 }list_status;
 
 status validate_arguments(char** argv,input* input);
+int check_operation(char *operator);
 status load_values_to_DLL(node ** head1, node** tail1,node** head2,node** tail2,char* num,char*num2);
 int compare_lists(node *head1, node *head2);
 
+
 status addition(node *head1, node *head2, node* tail1, node* tail2, node** reshead, node** restail,input *info);
+status subtraction(node *head1, node *head2, node *tail1, node *tail2,node **reshead, node **restail,input *info);
 
 
 list_status add_to_last(node ** head, node** tail,int data);

@@ -101,11 +101,62 @@ status addition(node *head1, node *head2, node* tail1, node* tail2, node** reshe
         }
 }
 
-
-status subtract_lists(node *tail1, node *tail2,node **reshead, node **restail)
+status subtraction(node *head1, node *head2,node *tail1, node *tail2,node **reshead, node **restail,input *info)
 {
-    node *temp1 = tail1;
-    node *temp2 = tail2;
+    /* Different signs mean addition of magnitudes:
+       99 - (-100) = 199
+       -99 - 100   = -199 */
+    if(info->flag1 != info->flag2)
+    {
+        input magnitude_info = {0};
+
+        status result = addition(head1, head2, tail1, tail2,
+                                 reshead, restail,
+                                 &magnitude_info);
+
+        info->flagres = info->flag1;
+
+        /* Avoid displaying negative zero. */
+        if(result == SUCCESS &&*reshead != NULL &&(*reshead)->data == 0 && (*reshead)->next == NULL)
+        {
+            info->flagres = 0;
+        }
+
+        return result;
+    }
+
+    int larger = compare_lists(head1, head2);
+
+    if(larger == 0)
+    {
+        info->flagres = 0;
+
+        if(add_to_first(reshead, restail, 0) != LIST_SUCCESS)
+        {
+            return FAILURE;
+        }
+
+        return SUCCESS;
+    }
+
+    node *temp1;
+    node *temp2;
+
+    /* Always subtract smaller magnitude from larger. */
+    if(larger == 1)
+    {
+        temp1 = tail1;
+        temp2 = tail2;
+
+        info->flagres = info->flag1;
+    }
+    else
+    {
+        temp1 = tail2;
+        temp2 = tail1;
+
+        info->flagres = !info->flag1;
+    }
 
     int borrow = 0;
     int d1, d2, res;
@@ -144,10 +195,7 @@ status subtract_lists(node *tail1, node *tail2,node **reshead, node **restail)
     }
 
     /* Remove leading zeroes, keeping one node for zero. */
-
-    while(*reshead != NULL &&
-          (*reshead)->data == 0 &&
-          (*reshead)->next != NULL)
+    while(*reshead != NULL && (*reshead)->data == 0 && (*reshead)->next != NULL)
     {
         node *temp = *reshead;
 

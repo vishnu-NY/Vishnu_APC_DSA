@@ -141,3 +141,29 @@ status load_values_to_DLL(node **head1, node **tail1,node **head2, node **tail2,
 
     return SUCCESS;
 }
+int check_operation(char *operator)
+{
+    //Reject empty spaces or strings with more than one character.
+    if(operator == NULL ||operator[0] == '\0' || operator[1] != '\0')
+    {
+        return 0;
+    }
+
+    switch(operator[0])
+    {
+        case '+':
+            return 1;
+
+        case '-':
+            return 2;
+
+        case '*':
+            return 3;
+
+        case '/':
+            return 4;
+
+        default:
+            return 0;
+    }
+}
