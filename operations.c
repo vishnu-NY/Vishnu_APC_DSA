@@ -409,8 +409,7 @@ status division(node *head1, node *head2,node *tail1, node *tail2,node **reshead
         {
             /* Magnitude-only subtraction:
                remainder - divisor */
-            if(subtract_lists(remaindertail, tail2,
-                              &temphead, &temptail) != SUCCESS)
+            if(subtraction(remaindertail, tail2,&temphead, &temptail) != SUCCESS)
             {
                 return FAILURE;
             }
