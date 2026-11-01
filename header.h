@@ -39,7 +39,7 @@ int compare_lists(node *head1, node *head2);
 status addition(node *head1, node *head2, node* tail1, node* tail2, node** reshead, node** restail,input *info);
 status subtraction(node *head1, node *head2, node *tail1, node *tail2,node **reshead, node **restail,input *info);
 status multiplication(node *head1, node *head2,node *tail1, node *tail2,node **reshead, node **restail,input *info);
-
+status division(node *head1, node *head2,node *tail1, node *tail2,node **reshead, node **restail, input *info);
 
 
 

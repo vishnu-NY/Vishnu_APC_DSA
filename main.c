@@ -43,7 +43,12 @@ int main (int argc, char* argv[])
     break;
 
     case 4:
-        
+        if(division(head1, head2, tail1, tail2, &reshead, &restail, &input) == FAILURE)
+        {
+            printf("ERROR : Division failed\n");
+            return 1;
+        }
+
         break;
 
     default:
