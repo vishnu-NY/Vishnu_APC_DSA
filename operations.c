@@ -207,10 +207,7 @@ status subtraction(node *head1, node *head2,node *tail1, node *tail2,node **resh
 
     return SUCCESS;
 }
-status multiplication(node *head1, node *head2,
-                      node *tail1, node *tail2,
-                      node **reshead, node **restail,
-                      input *info)
+status multiplication(node *head1, node *head2,node *tail1, node *tail2,node **reshead, node **restail,input *info)
 {
     /* The caller must provide an empty result list. */
     if(*reshead != NULL || *restail != NULL ||
@@ -275,8 +272,7 @@ status multiplication(node *head1, node *head2,
         {
             product = temp1->data * temp2->data + carry;
 
-            if(add_to_first(partialhead, partialtail,
-                            product % 10) != LIST_SUCCESS)
+            if(add_to_first(partialhead, partialtail,product % 10) != LIST_SUCCESS)
             {
                 return FAILURE;
             }
@@ -343,4 +339,127 @@ status multiplication(node *head1, node *head2,
     return SUCCESS;
 
     
+}
+
+status division(node *head1, node *head2,node *tail1, node *tail2,node **reshead, node **restail,input *info)
+{
+    /* Result list must initially be empty. */
+    if(head1 == NULL || head2 == NULL ||tail1 == NULL || tail2 == NULL ||*reshead != NULL || *restail != NULL)
+    {
+        return FAILURE;
+    }
+
+    /* Skip any leading zeroes in the divisor. */
+    node *divisor = head2;
+
+    while(divisor != NULL && divisor->data == 0)
+    {
+        divisor = divisor->next;
+    }
+
+    if(divisor == NULL)
+    {
+        printf("ERROR : Division by zero\n");
+        return FAILURE;
+    }
+
+    node *remainderhead = NULL;
+    node *remaindertail = NULL;
+
+    node *temphead = NULL;
+    node *temptail = NULL;
+
+    node *quotienthead = NULL;
+    node *quotienttail = NULL;
+
+    node *current = head1;
+
+    while(current != NULL)
+    {
+        /* Bring down the next dividend digit.
+           Appending a digit means:
+           remainder = remainder * 10 + current digit. */
+        if(add_to_last(&remainderhead, &remaindertail,
+                       current->data) != LIST_SUCCESS)
+        {
+            return FAILURE;
+        }
+
+        /* Remove leading zeroes from the remainder. */
+        while(remainderhead->data == 0 &&
+              remainderhead->next != NULL)
+        {
+            node *temp = remainderhead;
+
+            remainderhead = remainderhead->next;
+            remainderhead->prev = NULL;
+
+            free(temp);
+        }
+
+        int count = 0;
+
+        /* compare_lists returns:
+           0: equal
+           1: remainder is larger
+           2: divisor is larger
+
+           Keep subtracting while remainder >= divisor. */
+        while(compare_lists(remainderhead, divisor) != 2)
+        {
+            /* Magnitude-only subtraction:
+               remainder - divisor */
+            if(subtract_lists(remaindertail, tail2,
+                              &temphead, &temptail) != SUCCESS)
+            {
+                return FAILURE;
+            }
+
+            /* Replace the old remainder with the new one. */
+            delete_list(&remainderhead, &remaindertail);
+
+            copy_list(&remainderhead, &remaindertail,
+                      &temphead, &temptail);
+
+            count++;
+        }
+
+        /* Store this round's quotient digit. */
+        if(add_to_last(&quotienthead, &quotienttail,
+                       count) != LIST_SUCCESS)
+        {
+            return FAILURE;
+        }
+
+        current = current->next;
+    }
+
+    /* Remove leading zeroes from the quotient,
+       retaining one node when the answer is zero. */
+    while(quotienthead->data == 0 && quotienthead->next != NULL)
+    {
+        node *temp = quotienthead;
+
+        quotienthead = quotienthead->next;
+        quotienthead->prev = NULL;
+
+        free(temp);
+    }
+
+    /* Different signs give a negative quotient. */
+    info->flagres = (info->flag1 != info->flag2);
+
+    /* Avoid negative zero. */
+    if(quotienthead->data == 0 &&
+       quotienthead->next == NULL)
+    {
+        info->flagres = 0;
+    }
+
+    copy_list(reshead, restail, &quotienthead, &quotienttail);
+
+    delete_list(&remainderhead, &remaindertail);
+
+    return SUCCESS;
+
 }
