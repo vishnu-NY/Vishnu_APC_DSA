@@ -31,7 +31,7 @@ int main (int argc, char* argv[])
         break;
 
     case 2:
-        subtraction(head1, head2, tail1, tail2,&reshead, &restail);
+        subtraction(head1, head2, tail1, tail2,&reshead, &restail, &input);
         break;
 
     case 3:
@@ -50,6 +50,12 @@ int main (int argc, char* argv[])
     display_list(head1);//TESTING
     display_list(head2);
     printf("The result is \n");
-    display_list(reshead); // TESTING
+    if(input.flagres == 1)
+    {
+        printf("-");
+    }
+
+
+display_list(reshead); // TESTING
     
 }

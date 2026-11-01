@@ -125,3 +125,19 @@ int compare_lists(node *head1, node *head2)
 
     return 0;
 }
+
+void delete_list(node **head, node **tail)
+{
+    node *temp = *head;
+
+    while(temp != NULL)
+    {
+        node *next = temp->next;
+
+        free(temp);
+        temp = next;
+    }
+
+    *head = NULL;
+    *tail = NULL;
+}
