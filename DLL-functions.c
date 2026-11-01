@@ -141,3 +141,12 @@ void delete_list(node **head, node **tail)
     *head = NULL;
     *tail = NULL;
 }
+
+void copy_list(node **desthead, node **desttail,node **srchead, node **srctail)
+{
+    *desthead = *srchead;
+    *desttail = *srctail;
+    
+    *srchead = NULL;
+    *srctail = NULL;
+}
