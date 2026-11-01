@@ -35,8 +35,12 @@ int main (int argc, char* argv[])
         break;
 
     case 3:
-        
-        break;
+    if(multiplication(head1, head2, tail1, tail2,&reshead, &restail, &input) == FAILURE)
+    {
+        printf("ERROR : Multiplication failed\n");
+        return 1;
+    }
+    break;
 
     case 4:
         

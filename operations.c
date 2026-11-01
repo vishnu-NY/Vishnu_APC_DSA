@@ -207,3 +207,140 @@ status subtraction(node *head1, node *head2,node *tail1, node *tail2,node **resh
 
     return SUCCESS;
 }
+status multiplication(node *head1, node *head2,
+                      node *tail1, node *tail2,
+                      node **reshead, node **restail,
+                      input *info)
+{
+    /* The caller must provide an empty result list. */
+    if(*reshead != NULL || *restail != NULL ||
+       head1 == NULL || head2 == NULL ||
+       tail1 == NULL || tail2 == NULL)
+    {
+        return FAILURE;
+    }
+
+    node *result1head = NULL;
+    node *result1tail = NULL;
+
+    node *result2head = NULL;
+    node *result2tail = NULL;
+
+    node *sumhead = NULL;
+    node *sumtail = NULL;
+
+    node *temp2 = tail2;
+
+    long long int  count = 0;
+
+    while(temp2 != NULL)
+    {
+        node *temp1 = tail1;
+
+        int carry = 0;
+        int product;
+
+        node **partialhead;
+        node **partialtail;
+
+        /* First partial product goes into result1.
+           Remaining partial products go into result2. */
+        if(count == 0)
+        {
+            partialhead = &result1head;
+            partialtail = &result1tail;
+        }
+        else
+        {
+            partialhead = &result2head;
+            partialtail = &result2tail;
+        }
+
+        /* Shift this partial product according to place value:
+           count = 0: no zeroes
+           count = 1: one trailing zero
+           count = 2: two trailing zeroes */
+        for(long long int i = 0; i < count; i++)
+        {
+            if(add_to_last(partialhead, partialtail, 0)
+               != LIST_SUCCESS)
+            {
+                return FAILURE;
+            }
+        }
+
+        /* Multiply every digit of the first number
+           by the current digit of the second number. */
+        while(temp1 != NULL)
+        {
+            product = temp1->data * temp2->data + carry;
+
+            if(add_to_first(partialhead, partialtail,
+                            product % 10) != LIST_SUCCESS)
+            {
+                return FAILURE;
+            }
+
+            carry = product / 10;
+
+            temp1 = temp1->prev;
+        }
+
+        if(carry != 0)
+        {
+            if(add_to_first(partialhead, partialtail, carry) != LIST_SUCCESS)
+            {
+               return FAILURE;
+            }
+        }
+
+        /* From the second partial product onward,
+           add result1 and result2. */
+        if(count != 0)
+        {
+            input addition_info = {0};
+
+            if(addition(result1head, result2head,result1tail, result2tail,&sumhead, &sumtail,&addition_info) != SUCCESS)
+            {
+               return FAILURE;
+            }
+
+            delete_list(&result1head, &result1tail);
+            delete_list(&result2head, &result2tail);
+
+            /* Move the sum into result1 for the next round. */
+            copy_list(&result1head, &result1tail,&sumhead, &sumtail);
+        }
+
+        count++;
+        temp2 = temp2->prev;
+    }
+
+    
+    while(result1head != NULL &&result1head->data == 0 && result1head->next != NULL)
+    {
+        node *temp = result1head;
+
+        result1head = result1head->next;
+        result1head->prev = NULL;
+
+        free(temp);
+    }
+
+    
+    info->flagres = (info->flag1 != info->flag2); // == 1 if signs are different, 0 if same
+
+   
+    if(result1head != NULL &&result1head->data == 0 &&result1head->next == NULL)
+    {
+        info->flagres = 0; // If result is Zero, no sign displayed
+    }
+
+    /* Transfer the completed answer to the caller. */
+    copy_list(reshead, restail,
+              &result1head, &result1tail);
+
+    return SUCCESS;
+
+    
+}

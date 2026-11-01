@@ -52,16 +52,16 @@ status validate_arguments(char** argv, input* input)
 
     while(argv[3][i] != '\0')
     {
-        if(!isdigit((unsigned char)argv[3][i]))
+        if(!isdigit(( char)argv[3][i]))
         {
-            printf("ERROR : Invalid character in 2nd number\n");
+            printf("ERROR : Invalid character in 2nd number - %c\n", argv[3][i]);
             return FAILURE;
         }
         i++;
     }
 
    // Validate operator.
-    if(strlen(argv[2]) != 1 || !(argv[2][0] == '+' || argv[2][0] == '-' || argv[2][0] == '*' || argv[2][0] == '/'))
+    if(strlen(argv[2]) != 1 || !(argv[2][0] == '+' || argv[2][0] == '-' || argv[2][0] == 'x' || argv[2][0] == '/'))
     {
         printf("ERROR : Unsupported operator\n");
         return FAILURE;
@@ -157,7 +157,7 @@ int check_operation(char *operator)
         case '-':
             return 2;
 
-        case '*':
+        case 'x':
             return 3;
 
         case '/':

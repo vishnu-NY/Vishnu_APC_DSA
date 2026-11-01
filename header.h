@@ -38,10 +38,17 @@ int compare_lists(node *head1, node *head2);
 
 status addition(node *head1, node *head2, node* tail1, node* tail2, node** reshead, node** restail,input *info);
 status subtraction(node *head1, node *head2, node *tail1, node *tail2,node **reshead, node **restail,input *info);
+status multiplication(node *head1, node *head2,node *tail1, node *tail2,node **reshead, node **restail,input *info);
+
+
+
+
 
 
 list_status add_to_last(node ** head, node** tail,int data);
 list_status display_list(node* head);
 list_status add_to_first(node ** head, node** tail,int data);
+void delete_list(node **head, node **tail);
+void copy_list(node **desthead, node **desttail,node **srchead, node **srctail);
 
 #endif
