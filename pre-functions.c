@@ -3,65 +3,61 @@
 #include<ctype.h>
 #include"header.h"
 
-status validate_arguments(char** argv, input* input)
+status validate_arguments(char **argv, input *info)
 {
-    int i = 0;
+    info->flag1 = 0;
+    info->flag2 = 0;
+    info->flagres = 0;
 
-    // Default signs: 0 = positive, 1 = negative.
-    input->flag1 = 0;
-    input->flag2 = 0;
-    input->flagres = 0;
-
-    // Validate first char
-    if(argv[1][0] == '-')
+    /* Validate both numbers:
+       argv[1] = first number
+       argv[3] = second number */
+    for(int operand = 1; operand <= 3; operand += 2)
     {
-        input->flag1 = 1;
-        i = 1;
-    }
+        int i = 0;
+        int negative = 0;
 
-    if(argv[1][i] == '\0')
-    {
-        printf("ERROR : 1st number must contain digits\n");
-        return FAILURE;
-    }
-
-    while(argv[1][i] != '\0')
-    {
-        if(!isdigit((unsigned char)argv[1][i]))
+        /* Allow one optional sign, only at the beginning. */
+        if(argv[operand][i] == '+' || argv[operand][i] == '-')
         {
-            printf("ERROR : Invalid character in 1st number : %c\n", argv[1][i]);
+            negative = (argv[operand][i] == '-');
+            i++;
+        }
+
+        /* Reject empty numbers and signs without digits. */
+        if(argv[operand][i] == '\0')
+        {
+            printf("ERROR : Number %d must contain digits\n",
+                   (operand == 1) ? 1 : 2);
             return FAILURE;
         }
-        i++;
-    }
 
-    // Validate second number. 
-    i = 0;
-
-    if(argv[3][0] == '-')
-    {
-        input->flag2 = 1;
-        i = 1;
-    }
-
-    if(argv[3][i] == '\0')
-    {
-        printf("ERROR : 2nd number must contain digits\n");
-        return FAILURE;
-    }
-
-    while(argv[3][i] != '\0')
-    {
-        if(!isdigit(( char)argv[3][i]))
+        while(argv[operand][i] != '\0')
         {
-            printf("ERROR : Invalid character in 2nd number : %c\n", argv[3][i]);
-            return FAILURE;
+            if(!isdigit((unsigned char)argv[operand][i]))
+            {
+                printf("ERROR : Invalid character in number %d: %c\n",
+                       (operand == 1) ? 1 : 2,
+                       argv[operand][i]);
+                return FAILURE;
+            }
+
+            i++;
         }
-        i++;
+
+        if(operand == 1)
+        {
+            info->flag1 = negative;
+        }
+        else
+        {
+            info->flag2 = negative;
+        }
     }
 
-   // Validate operator.
-    if(strlen(argv[2]) != 1 || !(argv[2][0] == '+' || argv[2][0] == '-' || argv[2][0] == 'x' || argv[2][0] == '/'))
+    /* Accept exactly one supported operator. */
+    if(strlen(argv[2]) != 1 ||
+       !(argv[2][0] == '+' || argv[2][0] == '-' || argv[2][0] == 'x' || argv[2][0] == '*' || argv[2][0] == '/'))
     {
         printf("ERROR : Unsupported operator\n");
         return FAILURE;
@@ -75,11 +71,12 @@ status load_values_to_DLL(node **head1, node **tail1,node **head2, node **tail2,
 {
     int i = 0;
 
-    // Skip the first number's negative sign. 
-    if(num[i] == '-')
-    {
-        i++;
-    }
+    // Skip the first number's negative sign or possitive sign. 
+    
+if(num[i] == '-' || num[i] == '+')
+{
+    i++;
+}
 
     // Skip leading zeroes. 
     while(num[i] == '0')
@@ -110,10 +107,10 @@ status load_values_to_DLL(node **head1, node **tail1,node **head2, node **tail2,
     // Load the second number. 
     i = 0;
 
-    if(num2[i] == '-')
-    {
-        i++;
-    }
+    if(num2[i] == '-' || num2[i] == '+')
+{
+    i++;
+}
 
     while(num2[i] == '0')
     {
