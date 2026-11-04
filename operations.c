@@ -5,18 +5,15 @@
 #include<stdlib.h>
 
 
-status addition(node *head1, node *head2, node* tail1, node* tail2, node** reshead, node** restail,input *info)
+status addition(node *head1, node *head2,node *tail1, node *tail2,node **reshead, node **restail,input *info)
 {
-
-     /* Different signs: subtract the smaller magnitude
-       from the larger magnitude. */
+    /* Different signs: subtract magnitudes. */
     if(info->flag1 != info->flag2)
     {
         int larger = compare_lists(head1, head2);
 
         if(larger == 0)
         {
-            /* Equal magnitudes with opposite signs give zero. */
             info->flagres = 0;
 
             if(add_to_first(reshead, restail, 0) != LIST_SUCCESS)
@@ -26,79 +23,74 @@ status addition(node *head1, node *head2, node* tail1, node* tail2, node** reshe
 
             return SUCCESS;
         }
-        else if(larger == 1)
-        {
-            /* First number has the larger magnitude.
-               Result takes the first number's sign. */
-            info->flagres = info->flag1;
 
-            return subtraction(head1, head2, tail1, tail2,reshead, restail, info);
+        /* Make subtraction treat both magnitudes as positive. */
+        input subtraction_info = {0};
+        status result;
+
+        if(larger == 1)
+        {
+            result = subtraction(head1, head2, tail1, tail2,
+                                 reshead, restail,
+                                 &subtraction_info);
+
+            info->flagres = info->flag1;
         }
         else
         {
-            /* Second number has the larger magnitude.
-               Result takes the second number's sign. */
-            info->flagres = info->flag2;
+            result = subtraction(head2, head1, tail2, tail1,
+                                 reshead, restail,
+                                 &subtraction_info);
 
-            return subtraction(head2, head1, tail2, tail1,reshead, restail, info);
+            info->flagres = info->flag2;
         }
+
+        return result;
     }
 
-    /* Same signs: add normally and keep their common sign. */
+    /* Same signs: add magnitudes from right to left. */
+    node *temp1 = tail1;
+    node *temp2 = tail2;
+
+    int carry = 0;
+
+    while(temp1 != NULL || temp2 != NULL || carry != 0)
+    {
+        int d1 = (temp1 != NULL) ? temp1->data : 0;
+        int d2 = (temp2 != NULL) ? temp2->data : 0;
+
+        int sum = d1 + d2 + carry;
+
+        if(add_to_first(reshead, restail, sum % 10)
+           != LIST_SUCCESS)
+        {
+            return FAILURE;
+        }
+
+        carry = sum / 10;
+
+        if(temp1 != NULL)
+        {
+            temp1 = temp1->prev;
+        }
+
+        if(temp2 != NULL)
+        {
+            temp2 = temp2->prev;
+        }
+    }
 
     info->flagres = info->flag1;
 
-    node* temp1 = tail1;
-    node* temp2 = tail2;
-    int d1=temp1->data,d2=temp2->data,res,carry=0;
-    while(temp1!=NULL || temp2!=NULL)
+    //No signs for 0 outputa.
+    if(*reshead != NULL &&
+       (*reshead)->data == 0 &&
+       (*reshead)->next == NULL)
     {
-        res = carry + d1 + d2;
-
-        add_to_first( reshead,restail,(res%10));
-
-        if(res/10)
-        {
-            carry = res/10;
-        }
-        else
-        {
-            carry=0;
-        }
-
-        if(temp1 == NULL)
-        {
-            d1=0;
-            temp2 = temp2->prev;
-            if(temp2!=NULL)
-            d2=temp2->data; 
-        }
-        
-        else if(temp2 == NULL)
-        {
-            d2=0;
-            
-            temp1 = temp1->prev;
-            if(temp1!=NULL)
-            d1=temp1->data;
-            
-        }
-        else
-        {
-            temp2 = temp2->prev;
-            temp1 = temp1->prev;
-            if(temp1!=NULL) d1=temp1->data;
-            else d1=0;
-
-            if(temp2!=NULL) d2=temp2->data;
-            else d2=0;
-           
-        }
+        info->flagres = 0;
     }
-            if (carry != 0)
-        {
-            add_to_first(reshead, restail, carry);
-        }
+
+    return SUCCESS;
 }
 
 status subtraction(node *head1, node *head2,node *tail1, node *tail2,node **reshead, node **restail,input *info)
@@ -405,23 +397,25 @@ status division(node *head1, node *head2,node *tail1, node *tail2,node **reshead
            2: divisor is larger
 
            Keep subtracting while remainder >= divisor. */
-        while(compare_lists(remainderhead, divisor) != 2)
-        {
-            /* Magnitude-only subtraction:
-               remainder - divisor */
-            if(subtraction(remaindertail, tail2,&temphead, &temptail) != SUCCESS)
-            {
-                return FAILURE;
-            }
+       while(compare_lists(remainderhead, divisor) != 2)
+{
+    /* Both magnitudes are treated as positive.
+       Keep the original input signs unchanged. */
+    input subtraction_info = {0};
 
-            /* Replace the old remainder with the new one. */
-            delete_list(&remainderhead, &remaindertail);
+    if(subtraction(remainderhead, divisor,remaindertail, tail2,&temphead, &temptail,&subtraction_info) != SUCCESS)
+    {
+        return FAILURE;
+    }
 
-            copy_list(&remainderhead, &remaindertail,
-                      &temphead, &temptail);
+    /* Replace the old remainder with the subtraction result. */
+    delete_list(&remainderhead, &remaindertail);
 
-            count++;
-        }
+    copy_list(&remainderhead, &remaindertail,
+              &temphead, &temptail);
+
+    count++;
+}
 
         /* Store this round's quotient digit. */
         if(add_to_last(&quotienthead, &quotienttail,

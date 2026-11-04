@@ -29,7 +29,7 @@ status validate_arguments(char** argv, input* input)
     {
         if(!isdigit((unsigned char)argv[1][i]))
         {
-            printf("ERROR : Invalid character in 1st number\n");
+            printf("ERROR : Invalid character in 1st number : %c\n", argv[1][i]);
             return FAILURE;
         }
         i++;
@@ -54,7 +54,7 @@ status validate_arguments(char** argv, input* input)
     {
         if(!isdigit(( char)argv[3][i]))
         {
-            printf("ERROR : Invalid character in 2nd number - %c\n", argv[3][i]);
+            printf("ERROR : Invalid character in 2nd number : %c\n", argv[3][i]);
             return FAILURE;
         }
         i++;
